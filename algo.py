@@ -1,5 +1,8 @@
 import pandas as pd
 import stock
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Algo():
@@ -10,6 +13,7 @@ class Algo():
         self.algo_state = "TO_BUY"
         self.stx = stock.Stock(self.api, self.symbol,
                                self.lot, self.algo_state)
+        logger.info("Inside algo instance ...")
 
         now = pd.Timestamp.now(tz='America/New_York').floor('1min')
         market_open = now.replace(hour=9, minute=30)

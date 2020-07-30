@@ -1,5 +1,5 @@
 import logging
-from log_setup import logger
+# from log_setup import logger
 import pandas as pd
 
 logger = logging.getLogger(__name__)
