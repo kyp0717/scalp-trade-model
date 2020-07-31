@@ -88,21 +88,22 @@ class Algo():
                 self.set_state('TO_SELL')
                 self.stx.submit_sell(bailout=True)
             else:
-                self._l.warn(f'unexpected state for {event}: {self._state}')
+                logger.warn(f'unexpected state for {event}: {self.algo_state}')
 
     def checkup(self, position):
-        # self._l.info('periodic task')
+        logger.info('periodic task')
+        o = stock.Order(self.api, self.symbol)
+        p = stock.Position(self.api, self.symbol)
+        now = self.current_time()
 
-        now = current_time()
-        order = self._order
-        if (order is not None and
-            order.side == 'buy' and now -
-                pd.Timestamp(order.submitted_at, tz='America/New_York') > pd.Timedelta('2 min')):
-            last_price = self._api.polygon.last_trade(self._symbol).price
-            self._l.info(
-                f'canceling missed buy order {order.id} at {order.limit_price} '
+        if (o.order is not None and
+            o.order.side == 'buy' and now -
+                pd.Timestamp(o.order.submitted_at, tz='America/New_York') > pd.Timedelta('2 min')):
+            last_price = self.api.polygon.last_trade(self.symbol).price
+            logger.info(
+                f'canceling missed buy order {o.order.id} at {o.order.limit_price} '
                 f'(current price = {last_price})')
-            self._cancel_order()
+            self.stx.cancel_order()
 
-        if self._position is not None and self._outofmarket():
-            self._submit_sell(bailout=True)
+        if p.position is not None and self.outofmarket():
+            self.stx.submit_sell(bailout=True)

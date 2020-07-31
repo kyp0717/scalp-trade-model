@@ -21,6 +21,11 @@ class Stock:
     def set_state(self, new_state) -> str:
         self.algo_state = new_state
 
+    def cancel_order(self):
+        o = Order(self.api, self.symbol)
+        if o.order is not None:
+            self.api.cancel_order(o.order.id)
+
     def submit_buy(self):
         trade = self.api.polygon.last_trade(self.symbol)
         amount = int(self.lot / trade.price)
@@ -97,4 +102,3 @@ class Order:
 
     def check(self):
         pass
-
